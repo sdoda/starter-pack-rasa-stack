@@ -1,27 +1,41 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
-import logging
-import requests
-import json
 from rasa_core_sdk import Action
+from rasa_core_sdk.events import SlotSet
+import random
 
-logger = logging.getLogger(__name__)
 
+class ActionCheckStatus(Action):
 
-class ActionJoke(Action):
     def name(self):
-        # define the name of the action which can then be included in training stories
-        return "action_joke"
+        return "action_check_status"
 
     def run(self, dispatcher, tracker, domain):
-        # what your action should do
-        request = json.loads(
-            requests.get("https://api.chucknorris.io/jokes/random").text
-        )  # make an api call
-        joke = request["value"]  # extract a joke from returned json response
-        dispatcher.utter_message(joke)  # send the message back to the user
-        return []
+        # return a random status, just a mockup
+        statuses = ["received", "rejected", "interview", "unknown"]
+        status = random.choice(statuses)
+        return [SlotSet("status", status)]
+
+
+class ActionCheckPositions(Action):
+
+    def name(self):
+        return "action_check_positions"
+
+    def run(self, dispatcher, tracker, domain):
+        # return hard-coded open positions, this would normally come from an API
+        positions = { 
+            "technical": [
+                "machine learning engineer",
+                "ML product success engineer"
+            ],
+            "business": [
+                "Marketing Consultant",
+                "Sales Engineer",
+                "Equity Analyst"
+            ]
+        }
+        position_type = tracker.get_slot("role_type")
+        if position_type == "any":
+            relevant_positions = positions["technical"] + positions["business"]
+        else:
+            relevant_positions = positions.get(position_type, [])
+        return [SlotSet("positions", (' and ').join(relevant_positions))]
