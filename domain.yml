@@ -1,11 +1,12 @@
 intents:
-- greet
+- check
 - goodbye
 - thanks
-- deny
-- joke
+- status
+- greet  
 - name
-
+- inquiry  
+- process
 
 entities:
 - name
@@ -14,22 +15,52 @@ entities:
 slots:
   name:
     type: text
-
+  status:
+    type: categorical
+    values:
+      - received
+      - rejected
+      - interview
+      - unknown  
+  positions:
+    type: text
+  role_type:
+    type: text
 
 actions:
 - utter_name
 - utter_thanks
-- utter_greet
+- utter_check
 - utter_goodbye
-- action_joke
+- utter_greet
+- utter_greet_simple
+- utter_simple_message  
+- action_check_status
+- action_check_positions
+- action_provide_process
+- utter_status_received
+- utter_status_rejected
+- utter_status_interview
+- utter_status_unknown
+- utter_status_generic
+- utter_positions
 
 
 templates:
   utter_name:
-  - text: "Hey there! Tell me your name."
+  - text: "Hi, I’m Rasa’s recruiting bot. How can I help?"
 
+  utter_check:
+  - text: "Are you looking for a technical or a business role?"
+  
   utter_greet:
-  - text: "Nice to you meet you {name}. How can I help?"
+  - text: "Hi {name}! Let me check that for you"
+ 
+  utter_greet_simple:
+  - text: "Hi {name}! What can i do for you ?"
+
+  utter_simple_message:
+  - text: "Let me check !"  
 
   utter_goodbye:
   - text: "Talk to you later!"
@@ -37,3 +68,20 @@ templates:
   utter_thanks:
   - text: "My pleasure."
   
+  utter_status_received:
+  - text: "Yes, your application has been received."
+
+  utter_status_rejected:
+  - text: "Sorry, your application has been rejected."
+  
+  utter_status_interview:
+  - text: "Yes, you should receive a communication on the interview process shortly"
+  
+  utter_status_unknown:
+  - text: "Sorry, we do not have any data on your application."
+
+  utter_positions:
+  - text: "{positions} are currently available"
+
+  utter_status_generic:
+  - text: "Application Status : {status}"
